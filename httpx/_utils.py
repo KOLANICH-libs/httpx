@@ -49,9 +49,20 @@ def normalize_header_value(
     """
     Coerce str/bytes into a strictly byte-wise HTTP header value.
     """
-    if isinstance(value, bytes):
+    if isinstance(
+        value,
+        (
+            bytes,
+            bytearray,
+            memoryview,
+        ),
+    ):
         return value
-    return value.encode(encoding or "ascii")
+    if value is None:
+        return value
+    if isinstance(value, str):
+        return value.encode(encoding or "ascii")
+    raise NotImplementedError
 
 
 def primitive_value_to_str(value: "PrimitiveData") -> str:
